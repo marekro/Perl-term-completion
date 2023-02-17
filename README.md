@@ -135,11 +135,11 @@ Term::Completion offers the following methods:
     This method is called on the answer string entered by the user
     after the ENTER key was pressed. The implementation in the base
     class is just stripping any leading and trailing whitespace.
-    The method returnes the postprocessed answer string.
+    The method returns the post-processed answer string.
 
 - validate($answer)
 
-    This method is called on the postprocessed answer and returns:
+    This method is called on the post-processed answer and returns:
 
     1\. in case of success
 
@@ -159,14 +159,14 @@ Term::Completion offers the following methods:
                         $this->{eol});
     ```
 
-    Validation is turned on by the `validation` parameter.
+    Validation is turned on by the `validate` parameter.
     See ["Predefined Validations"](#predefined-validations) for a list of available
     validation options.
 
     You can override this method in derived classes to implement
     your own validation strategy - but in some situations this
-    could be too much overhead. So the base class understands
-    this callback:
+    could be too much overhead. So the base class accepts an array
+    reference for a custom validation callback:
 
     ```perl
     my $tc = Term::Completion->new(
@@ -179,10 +179,10 @@ Term::Completion offers the following methods:
     );
     ```
 
-    Note that the given code reference will be passed the one single
-    argument, namely the current input string, and is supposed to return
-    _undef_ if the input is invalid, or the (potentially corrected) string,
-    like in the example above.
+    Note that the given code reference will be passed one single argument,
+    namely the current input string, and is supposed to return _undef_ if
+    the input is invalid, or the (potentially corrected) string, like in the
+    example above.
 
 - get\_choices($answer)
 
@@ -208,7 +208,7 @@ Term::Completion offers the following methods:
     command. The user can use ENTER to proceed by one line, SPACE to proceed
     to the next page and Q or CTRL-C to quit paging. After listing the
     choices and return from this method, the prompt and the current answer
-    are redisplayed.
+    are displayed again.
 
     Override this method if you have a better pretty-printer/pager. :-)
 
@@ -362,6 +362,13 @@ single character, e.g. `qr/-disable-/`.
     Default is the empty array reference `[]`. Undefined items are
     filtered out.
 
+- `validate`
+
+    Enable validation of the entered string. The value can be either a string
+    of comma or blank-separated words, see below for available options; or an
+    array reference, containing two scalars: the validation error string and
+    a code reference that implements the check.
+
 ## Predefined Validations
 
 Whenever you need validation of the user's input, you can always specify
@@ -374,7 +381,7 @@ You can specify them as a blank or comma separated string in the
 my $tc = Term::Completion->new(
   prompt => 'Fruit: ',
   choices => [ qw(apple banana cherry) ],
-  validation => 'nonblank fromchoices'
+  validate => 'nonblank fromchoices'
 );
 ```
 
@@ -451,7 +458,7 @@ welcome, but there is probably little that can be fixed here.
 ## Terminal size changes
 
 This package does the best it can to handle changes of the terminal size
-during the completion process. It redisplays the prompt and the current
+during the completion process. It displays the prompt again and the current
 entry during completion, and restarts paging when showing the list of
 choices. The latter however only after you press a key - the bell
 sounds to indicate that something happened. This is because it does not
