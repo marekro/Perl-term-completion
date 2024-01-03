@@ -9,7 +9,7 @@ require Exporter;
 our @ISA = qw(Exporter);
 our @EXPORT_OK = qw(Complete);
 
-our $VERSION = '1.01';
+our $VERSION = '1.02';
 
 our %DEFAULTS = (
     # input/output channels
@@ -203,7 +203,7 @@ sub complete
               }
             }
             my $add = $l - $r;
-            if($add) {
+	    if($add > 0) {
               $this->{out}->print($test = substr($test, $r, $add));
               # reset counter if something was added
               $tab_pressed = 0;
